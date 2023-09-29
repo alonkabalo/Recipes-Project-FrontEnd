@@ -1,0 +1,46 @@
+nav {
+  background-color: #333;
+  padding: 12px;
+
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  justify-content: space-between;
+
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  transition: background-color 0.2s ease;
+}
+
+nav:hover {
+  background-color: #444;
+}
+
+.username {
+  color: #fff;
+  font-weight: bold;
+
+  transition: color 0.2s ease;
+}
+
+.username:hover {
+  color: #ccc;
+}
+
+.logout {
+  color: #888;
+  font-weight: bold;
+
+  transition: color 0.2s ease;
+}
+
+.logout:hover {
+  color: #fff;
+}
+
+
+.nav-bar-settings{ 
+  display:flex;
+  column-gap: 12px;
+}

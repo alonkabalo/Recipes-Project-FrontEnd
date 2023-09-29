@@ -1,0 +1,73 @@
+
+.form-container {
+    background:white;
+    padding:16px;
+    min-width:400px;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 10px;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    padding:8px;
+}
+
+form input,button{
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid lightgray;
+}
+
+
+form button {
+    background-image: linear-gradient(25deg, #654ea3 ,#eaafc8);
+    color:white;
+    font-size: 22px;
+    cursor: pointer;
+    font-family: 'Kanit Medium';
+}
+
+.switch {
+    display: flex;
+    flex-direction: row;
+    margin-inline: auto;
+    width: fit-content;
+    padding: 16px;
+}
+
+.switch div {
+    min-width: 150px;
+    text-align: center;
+    padding:8px;
+    font-size: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Kanit Medium';
+}
+
+.switch_selected {
+    color:white;
+    background-image: linear-gradient(25deg, #654ea3 ,#eaafc8);
+    transition: .25s linear;
+}
+
+.not-member {
+    margin-inline: auto;
+    width: fit-content;
+    display: block;
+    padding:12px;
+    font-size: 18px;
+    font-family: 'Kanit Medium';
+}
+.not-member b {
+    color:#eaafc8;
+    cursor:pointer;
+}
+.form-container h1 {
+    width: fit-content;
+    margin-inline: auto;
+    font-family: 'Kanit Bold';
+}
