@@ -1,8 +1,3 @@
- Business account - add,edit delete recipe
- Normal account view recipes, add recipes to favorites, 
- Admin - can edit all recipes, add recipes, view all recipes
-
-
 
 
 סקירה
