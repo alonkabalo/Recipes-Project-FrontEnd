@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
+    width:90%;
   }
   
   .recipe-image {
@@ -17,6 +18,7 @@
     overflow: hidden;
     cursor: pointer;
     opacity: 0.85;
+    min-width: 250px !important;
     position:relative;
   }
   

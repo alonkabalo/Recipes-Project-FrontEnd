@@ -122,6 +122,13 @@ export const useAuth = () => {
         }
     }, [])
 
+    useEffect(() => {
+        const favorites = localStorage.getItem("recipes_favorites")
+        if(favorites === null) {
+            localStorage.setItem('recipes_favorites',JSON.stringify([]))
+        }
+    },[])
+
 
     return {
         submit_logout: () => {

@@ -20,6 +20,8 @@ const addRecipeButtonStyle = { position: 'fixed', right: '32px', bottom: '32px',
 function App() {
   const auth = useAuth()
   const nav = useNavigate()
+
+
   return (
     <div className="App">
       <Navbar auth={auth} />
@@ -36,9 +38,9 @@ function App() {
         <Route path='/auth' element={<Auth auth={auth} />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
-      <AddOutlined style={addRecipeButtonStyle} onClick={() => nav("/add-recipe")} />
+
       <div>
-        {auth.currentUser?.admin && <div className="add-recipe-btn" onClick={() => { nav("/add-recipe") }}><AdminBtn /></div>}
+        {(auth.currentUser?.admin || auth.currentUser?.type === 'business') && <div className="add-recipe-btn" onClick={() => { nav("/add-recipe") }}><AdminBtn /></div>}
       </div>
     </div>
   );

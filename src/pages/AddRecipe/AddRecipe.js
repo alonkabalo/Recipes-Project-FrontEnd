@@ -41,7 +41,7 @@ export default function AddRecipe() {
     const nav = useNavigate()
 
     if (!auth || !auth.currentUser) return <h1>You need to login first</h1>
-    if (auth.currentUser.type !== 'business') {
+    if (auth.currentUser.type !== 'business'  && !auth.currentUser.admin) {
         return <h1>You need to have a business account to see this page <Link to="/">Back home</Link></h1>
     }
 
@@ -53,7 +53,7 @@ export default function AddRecipe() {
         e.preventDefault()
         const thumbnail_url = e.target[0].value
         const name = e.target[1].value
-        const country = selectedCategory
+        const country = selectedCategory ?? "mexican"
         const description = e.target[3].value
 
 
@@ -101,7 +101,9 @@ export default function AddRecipe() {
             localStorage.setItem(`recipes_${country}`, JSON.stringify(recipes))
         } else {
             localStorage.setItem(`recipes_${country}`, JSON.stringify([recipe]))
-        }
+        }  
+        console.log(country)
+        console.log(recipe)
 
         nav("/")
 

@@ -92,7 +92,9 @@ function Recipe({ recipe, belongsToCurrentUser, inFavorites, favoritesContext, s
 export default function RecipeList({ setAllRecipes = () => { }, inFavorites = {remove:() => {}}, showFavorites = true, recipes, auth }) {
     const favoritesContext = useFavoriteRecepies({ setAllRecipes })
 
-    return <div className="recipe-list">
+
+
+    return <div className={"recipe-list"}>
         {recipes.map(recipe => <Recipe
             inFavorites={inFavorites}
             showFavorites={showFavorites}

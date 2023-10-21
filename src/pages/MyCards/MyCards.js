@@ -15,7 +15,7 @@ export default function MyCards({ auth }) {
     }, [userRecipes])
 
     if (!auth || !auth.currentUser) return <h1>You need to login first</h1>
-    if (auth.currentUser.type !== 'business') {
+    if (auth.currentUser.type !== 'business' && !auth.currentUser.admin) {
         return <h1>You need to have a business account to see this page</h1>
     }
     return <Frame>

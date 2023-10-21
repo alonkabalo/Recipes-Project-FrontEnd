@@ -124,10 +124,18 @@ export default function RecipePage({ auth }) {
                     content: "Would you like to delete " + recipe.name,
                     onOk: () => {
                         let c = country === 'usa' ? '' : country
-                        const recipes = JSON.parse(localStorage.getItem(`recipes_${c}`))
+                        let recipes = JSON.parse(localStorage.getItem(`recipes_${c}`))
                         let index = recipes.findIndex(r => r.id === recipe.id)
                         recipes.splice(index, 1)
                         localStorage.setItem(`recipes_${c}`, JSON.stringify(recipes))
+
+
+                        if(recipe.userId === auth?.currentUser?.id) {
+                            recipes = JSON.parse(localStorage.getItem(`recipes_user`))
+                            index = recipes.findIndex(r => r.id === recipe.id)
+                            recipes.splice(index, 1)
+                            localStorage.setItem(`recipes_user`, JSON.stringify(recipes))
+                        }
                         nav("/")
                         message.success("Recipe deleted successfully")
                     }

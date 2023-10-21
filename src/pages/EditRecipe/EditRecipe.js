@@ -65,7 +65,7 @@ export default function EditRecipe({ auth }) {
         e.preventDefault()
         const thumbnail_url = e.target[0].value
         const name = e.target[1].value
-        const country = selectedCategory
+        const country = recipe.country
         const description = e.target[3].value
 
 
@@ -141,7 +141,6 @@ export default function EditRecipe({ auth }) {
                         defaultValue={recipe?.name}
                         type="text" placeholder="Enter recipe name" />
 
-                    <CategoryDropdown setCategory={setSelectedCategory} selected={selectedCategory} />
                     <textarea
                         defaultValue={recipe?.description}
                         type="text" placeholder="Enter recipe description" />
