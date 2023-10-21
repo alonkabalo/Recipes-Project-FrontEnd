@@ -5,19 +5,21 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import Frame from "../../components/Frame/Frame"
 import { AbsoluteIconComponent } from "../../components/RecipeList/RecipeList"
-import {Modal, message} from 'antd'
+import { Modal, message } from 'antd'
 
 import {
-     RecipeBody,
-     RecipeDetails,
-     RecipeDetailsHeader,
-     RecipeHeader,
-     RecipeImage,
-     RecipePageStyle } from "./RecipePageStyles"
+    RecipeBody,
+    RecipeDetails,
+    RecipeDetailsHeader,
+    RecipeHeader,
+    RecipeImage,
+    RecipePageStyle
+} from "./RecipePageStyles"
 import styled from "@emotion/styled";
+import { v4 } from "uuid";
 
-     /*
-    calories
+/*
+calories
 carbohydrates
 fat
 fiber
@@ -26,107 +28,114 @@ sugar
 */
 
 
-const Nutrition = ({nutrition}) => {
+const Nutrition = ({ nutrition }) => {
     return <div>
         <b>Calories:</b> {nutrition.calories}
-        <br/>
+        <br />
         <b>Carbohydrates:</b> {nutrition.carbohydrates}g
-        <br/>
+        <br />
         <b>Fat:</b> {nutrition.fat}g
-        <br/>
+        <br />
         <b>Fiber:</b> {nutrition.fiber}g
-        <br/>
+        <br />
         <b>Protein:</b> {nutrition.protein}g
-        <br/>
+        <br />
         <b>Sugar:</b> {nutrition.sugar}g
     </div>
 }
 
 const Instruction = ({ instruction }) => {
     return <div>
-        {instruction.position}. { instruction.display_text}
+        {instruction.position}. {instruction.display_text}
     </div>
 }
 
-const Instructions = ({recipe}) => {
+const Instructions = ({ recipe }) => {
     return <div>
-        <h3 style={{textDecoration:'underline'}}>Instructions</h3>
-        {Children.toArray(recipe.instructions.map(intruction => <Instruction instruction={intruction}/>))}
+        <h3 style={{ textDecoration: 'underline' }}>Instructions</h3>
+        {Children.toArray(recipe.instructions.map(intruction => <Instruction instruction={intruction} />))}
     </div>
 }
 
 
 
 
-const UserRatings = ({recipe}) => {
+const UserRatings = ({ recipe }) => {
 
 
     const Stars = useCallback(() => {
+        if (recipe.user_ratings.score === 4) return [
+            <StarIcon key={v4()} style={{ color: 'gold' }} />,
+            <StarIcon key={v4()} style={{ color: 'gold' }} />,
+            <StarIcon key={v4()} style={{ color: 'gold' }} />,
+            <StarIcon key={v4()} style={{ color: 'gold' }} />
+        ]
         const stars = []
         let rating = recipe.user_ratings.score * 5
         let numStars = Math.floor(rating)
         let fraction = rating % 1
-        if(fraction > 0.5) {
-            stars.push(<StarIcon style={{color:'gold'}}/>)
-        } 
+        if (fraction > 0.5) {
+            stars.push(<StarIcon style={{ color: 'gold' }} />)
+        }
 
-        for(let i = 0;  i < numStars; i++) 
-            stars.push(<StarIcon style={{color:'gold'}}/>)
+        for (let i = 0; i < numStars; i++)
+            stars.push(<StarIcon key={v4()} style={{ color: 'gold' }} />)
         return <> {stars} </>
-    },[])
+    }, [])
 
     return <div className="right">
-        <Stars/>
+        <Stars />
     </div>
 }
 
-export default function RecipePage() {
+export default function RecipePage({ auth }) {
     const { country, recipeId } = useParams()
     const nav = useNavigate()
     const { getRecipeById } = useRecepies(country === 'usa' ? '' : country)
-    const recipe = useMemo(() => getRecipeById(recipeId),[country, recipeId, getRecipeById])
-    if(!recipe) return null
-  
-  
-   return <Frame>
+    const recipe = useMemo(() => getRecipeById(recipeId), [country, recipeId, getRecipeById])
+    if (!recipe) return null
+
+    return <Frame>
         <RecipePageStyle>
 
-        <RecipeHeader>
-             <RecipeImage src ={recipe.thumbnail_url}/>
-         <RecipeDetails>
+            <RecipeHeader>
+                <RecipeImage src={recipe.thumbnail_url} />
+                <RecipeDetails>
 
-           <RecipeDetailsHeader>
-             {recipe.name}
-           </RecipeDetailsHeader>
-          <AbsoluteIconComponent country={recipe.country}/>
-          <p className="max-width-800">{recipe.description}</p>
-          <Nutrition nutrition={recipe.nutrition}/>
-          <p><b>Time: </b> {recipe.total_time_tier.display_tier}</p>
-         </RecipeDetails>
-        
-        </RecipeHeader>
+                    <RecipeDetailsHeader>
+                        {recipe.name}
+                    </RecipeDetailsHeader>
+                    <AbsoluteIconComponent country={recipe.country} />
+                    <p className="max-width-800">{recipe.description}</p>
+                    <Nutrition nutrition={recipe.nutrition} />
+                    <p><b>Time: </b> {recipe.total_time_tier.display_tier}</p>
+                </RecipeDetails>
 
-        <RecipeBody>
-            <Instructions recipe={recipe}/>
+            </RecipeHeader>
 
-            <UserRatings recipe={recipe}/>
-        </RecipeBody>
+            <RecipeBody>
+                <Instructions recipe={recipe} />
 
-        <button onClick={() => {
-           Modal.confirm({
-            content:"Would you like to delete "  + recipe.name,
-            onOk:() => {
-                let c = country === 'usa' ? '' : country 
-                const recipes = JSON.parse(localStorage.getItem(`recipes_${c}`))
-                let index = recipes.findIndex(r => r.id === recipe.id)
-                recipes.splice(index,1)
-                localStorage.setItem(`recipes_${c}`, JSON.stringify(recipes))
-                nav("/")
-                message.success("Recipe deleted successfully")
-            }
-           })
+                <UserRatings recipe={recipe} />
+            </RecipeBody>
 
-        }}>Delete</button>
+            {(recipe.userId === auth?.currentUser?.id || auth?.currentUser.admin) && <button onClick={() => {
+                Modal.confirm({
+                    content: "Would you like to delete " + recipe.name,
+                    onOk: () => {
+                        let c = country === 'usa' ? '' : country
+                        const recipes = JSON.parse(localStorage.getItem(`recipes_${c}`))
+                        let index = recipes.findIndex(r => r.id === recipe.id)
+                        recipes.splice(index, 1)
+                        localStorage.setItem(`recipes_${c}`, JSON.stringify(recipes))
+                        nav("/")
+                        message.success("Recipe deleted successfully")
+                    }
+                })
+
+            }}>Delete</button>}
+
+            {(recipe.userId === auth?.currentUser?.id || auth?.currentUser.admin) && <><br/><button onClick={() => nav(`/edit-recipe/${recipe.country ?? 'usa'}/${recipe.id}`)}>Edit</button></>}
         </RecipePageStyle>
     </Frame>
 }

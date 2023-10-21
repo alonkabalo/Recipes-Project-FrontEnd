@@ -17,6 +17,7 @@
     overflow: hidden;
     cursor: pointer;
     opacity: 0.85;
+    position:relative;
   }
   
   .recipe-card:hover {

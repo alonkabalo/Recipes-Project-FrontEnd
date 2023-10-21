@@ -1,26 +1,35 @@
-import { Children, useRef, useState } from "react";
+import { Children, useEffect, useMemo, useRef, useState } from "react";
 import CategoryDropdown from "../../components/CategoryDropdown/CategoryDropdown";
 import Frame from "../../components/Frame/Frame";
 
 import { v4 } from 'uuid'
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import DeleteIcon from "@mui/icons-material/DeleteForeverOutlined"
 import { message } from 'antd'
 import { IconButton } from "@mui/material";
-import { useAuth } from "../../hooks";
+import { useAuth, useRecepies } from "../../hooks";
 import { Link } from "react-router-dom";
 
-export default function AddRecipe() {
+export default function EditRecipe({ auth }) {
 
+    const { recipeId, country } = useParams()
+    const { allRecipes } = useRecepies(country)
 
-    const [selectedCategory, setSelectedCategory] = useState()
-    const [instructions, setIntstructions] = useState([])
+    const recipe = useMemo(() => {
+        if (!recipeId) return null
+        return allRecipes.find(recipe => recipe.id === recipeId)
+    }, [recipeId, allRecipes])
+
+    const [selectedCategory, setSelectedCategory] = useState(recipe?.country)
+    const [instructions, setIntstructions] = useState(recipe?.instructions ?? [])
     const ref = useRef()
 
 
-    const auth = useAuth()
-
+    useEffect(() => {
+        setSelectedCategory(recipe?.country)
+        setIntstructions(recipe?.instructions ?? [])
+    }, [recipe])
 
     const addInstruction = () => {
         const content = ref.current.value
@@ -43,6 +52,9 @@ export default function AddRecipe() {
     if (!auth || !auth.currentUser) return <h1>You need to login first</h1>
     if (auth.currentUser.type !== 'business') {
         return <h1>You need to have a business account to see this page <Link to="/">Back home</Link></h1>
+    }
+    if (recipe && recipe.userId !== auth.currentUser.id) {
+        return <h1>You can only edit your own recipes <Link to="/">Back home</Link></h1>
     }
 
 
@@ -94,9 +106,12 @@ export default function AddRecipe() {
 
         if (recipesExiting) {
             const recipes = JSON.parse(recipesExiting)
+            const current = recipes.findIndex(r => r.id === recipe.id)
+            recipes.splice(current, 1, recipe)
             const recipesUser = JSON.parse(recipesUserExiting)
-            recipes.push(recipe)
-            recipesUser.push(recipe)
+            const currentUser = recipesUser.findIndex(r => r.id === recipe.id)
+            recipesUser.splice(currentUser, 1, recipe)
+
             localStorage.setItem(`recipes_user`, JSON.stringify(recipesUser))
             localStorage.setItem(`recipes_${country}`, JSON.stringify(recipes))
         } else {
@@ -106,7 +121,7 @@ export default function AddRecipe() {
         nav("/")
 
         message.success({
-            content: "Successfully added new recipe",
+            content: "Successfully saved recipe",
             duration: 1
         })
 
@@ -119,33 +134,51 @@ export default function AddRecipe() {
             <div className="top">
 
                 <div className="top-details">
-                    <input type="text" placeholder="Enter image url" />
-                    <input type="text" placeholder="Enter recipe name" />
+                    <input
+                        defaultValue={recipe?.thumbnail_url}
+                        type="text" placeholder="Enter image url" />
+                    <input
+                        defaultValue={recipe?.name}
+                        type="text" placeholder="Enter recipe name" />
 
                     <CategoryDropdown setCategory={setSelectedCategory} selected={selectedCategory} />
-                    <textarea type="text" placeholder="Enter recipe description" />
+                    <textarea
+                        defaultValue={recipe?.description}
+                        type="text" placeholder="Enter recipe description" />
 
                 </div>
 
                 <div className="nutrition-values">
                     <b>Calories in grams:</b>
-                    <input type="number" placeholder="enter amount"></input>
+                    <input
+                        defaultValue={recipe?.nutrition?.calories}
+                        type="number" placeholder="enter amount"></input>
                     <br />
                     <b>Carbohydrates in grams:</b>
-                    <input type="number" placeholder="enter amount"></input>
+                    <input
+                        defaultValue={recipe?.nutrition?.carbohydrates}
+                        type="number" placeholder="enter amount"></input>
 
                     <br />
                     <b>Fat in grams:</b>
-                    <input type="number" placeholder="enter amount"></input>
+                    <input
+                        defaultValue={recipe?.nutrition?.fat}
+                        type="number" placeholder="enter amount"></input>
                     <br />
                     <b>Fiber in grams:</b>
-                    <input type="number" placeholder="enter amount"></input>
+                    <input
+                        defaultValue={recipe?.nutrition?.fiber}
+                        type="number" placeholder="enter amount"></input>
                     <br />
                     <b>Protein in grams:</b>
-                    <input type="number" placeholder="enter amount"></input>
+                    <input
+                        defaultValue={recipe?.nutrition?.protein}
+                        type="number" placeholder="enter amount"></input>
                     <br />
                     <b>Sugar in grams:</b>
-                    <input type="number" placeholder="enter amount"></input>
+                    <input
+                        defaultValue={recipe?.nutrition?.sugar}
+                        type="number" placeholder="enter amount"></input>
                 </div>
             </div>
 
@@ -156,7 +189,11 @@ export default function AddRecipe() {
             </div>
 
 
-            <input placeholder="Enter instruction content" ref={ref}></input>
+            <input
+                defaultValue={
+                    recipe?.instructions?.map(instruction => instruction.display_text).join("\n")
+                }
+                placeholder="Enter instruction content" ref={ref}></input>
             <button type="button" onClick={addInstruction} style={{ transform: 'scale(0.7)' }}>Add Instruction</button>
 
             <h4 style={{ padding: 0, margin: 0 }}>Instruction list</h4>
@@ -172,7 +209,7 @@ export default function AddRecipe() {
                 </li>))}
             </ol>
 
-            <button type="submit">Add Recipe</button>
+            <button type="submit">Save Changes</button>
 
         </form>
     </Frame>

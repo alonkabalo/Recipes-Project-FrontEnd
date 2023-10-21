@@ -13,6 +13,15 @@ nav {
   transition: background-color 0.2s ease;
 }
 
+.my-cards-btn,.home_btn, .about_btn {
+  color:white;
+  cursor:pointer;
+  transition:.2s linear;
+}
+
+.my-cards-btn:hover,.home_btn:hover, .about_btn:hover {
+  color:gray;
+}
 nav:hover {
   background-color: #444;
 }
